@@ -55,6 +55,16 @@ html
         a(href="#{url("/")}") <span>ddp</span>roulette
         | &nbsp;🔫
 
+
+    - if params.key?("error")
+        section.message.error Il faut tout remplir
+    - if params.key?("exist")
+        section.message.error Déjà commandé !
+    - if params.key?("invalid_user")
+        section.message.error Utilisateur invalide
+    - if params.key?("thankyou")
+        section.message.notice Commande passée !
+
     section
       == yield
 
@@ -62,39 +72,33 @@ html
       a(href="#{url("/apropos")}" title="C'est quoi ?") ?
 
 @@ apropos
-
-p
+section.solo
   strong ddproulette
   |  est un service pour automatiser la sélection de la personne qui doit
     commander chez Délice des Pâtes.
 
 @@ index
-- if params.key?("error")
-    p.error Il faut tout remplir
-- if params.key?("exist")
-    p.error Déjà commandé !
-- if params.key?("invalid_user")
-    p.error Utilisateur invalide
-- if params.key?("thankyou")
-    p.notice Commande passée !
-h2 Ma commande :
-form(action="#{url("/order")}" method="post")
-  p
-    input(type="text" name="user" placeholder="Utilisateur LDAP" value="#{cookies[:user] || nil}")
-  p
-    textarea(name="content" placeholder="Commande" rows="5")
-  p
-    input(type="submit" name="send" value="Commander")
-h2
-  - if @orders.count.zero?
-    | Personne ne commande pour l'instant !
-  - elsif @orders.count == 1
-    | Une personne commande ce midi.
-  - else
-    | #{@orders.count} personnes commandent ce midi.
-h2 Au menu ce midi :
-.menu
-  - if Menu.available?
-    == Menu.content
-  - else
-    | On sait pas encore !
+.content-main
+  h2 Ma commande :
+  form(action="#{url("/order")}" method="post")
+    p
+      input(type="text" name="user" placeholder="Utilisateur LDAP" value="#{cookies[:user] || nil}")
+    p
+      textarea(name="content" placeholder="Commande" rows="5")
+    p
+      input(type="submit" name="send" value="Commander")
+  h2
+    - if @orders.count.zero?
+      | Personne ne commande pour l'instant !
+    - elsif @orders.count == 1
+      | Une personne commande ce midi.
+    - else
+      | #{@orders.count} personnes commandent ce midi.
+
+.content-more
+  h2 Au menu ce midi :
+  .menu
+    - if Menu.available?
+      == Menu.content
+    - else
+      | On sait pas encore !

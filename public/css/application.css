@@ -9,7 +9,7 @@ body {
 
 header {
   width: 100%;
-  background-color: #4475ce;
+  background-color: #3560ae;
   padding-top: 2rem;
   padding-bottom: 1rem;
 }
@@ -37,6 +37,32 @@ section, footer {
   margin: 0 auto;
 }
 
+section {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+section .content-main {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+section .content-more {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
 input[type=text], textarea {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
@@ -44,14 +70,16 @@ input[type=text], textarea {
   width: 100%;
 }
 
-p.error {
+section.error {
+  margin-top: 1em;
   border: 2px solid #ce4e44;
   background-color: #dfbfbd;
   padding: 0.25rem 0.5rem;
   color: #880800;
 }
 
-p.thankyou {
+section.notice {
+  margin-top: 1em;
   border: 2px solid #3bb442;
   background-color: #c1dfbd;
   padding: 0.25rem 0.5rem;
@@ -73,8 +101,45 @@ footer a {
   line-height: 2em;
   font-weight: bold;
   background-color: #6495fe;
-  -webkit-border-radius: 50%;
-     -moz-border-radius: 50%;
-          border-radius: 50%;
+  border-radius: 50%;
 }
 
+@media screen and (min-width: 960px) {
+  section, footer {
+    width: 90%;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+  }
+
+  header h1 {
+    width: 90%;
+  }
+
+  section.solo {
+    width: 42em;
+    display: block;
+    margin-top: 1em;
+  }
+
+  section .content-main {
+    -webkit-box-flex: 2;
+    -webkit-flex: 2;
+        -ms-flex: 2;
+            flex: 2;
+  }
+
+  section .content-more {
+    margin-left: 2em;
+    -webkit-box-flex: 3;
+    -webkit-flex: 3;
+        -ms-flex: 3;
+            flex: 3;
+  }
+
+  section.message {
+    width: 42em;
+  }
+}
