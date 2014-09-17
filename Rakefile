@@ -22,10 +22,6 @@ end
 task :fetch_daily_menu do
   require "./lib/menu"
 
-  if Menu.available?
-    error "Le menu d'aujourd'hui est déjà disponible"
-  end
-
   puts "Récupération du menu d'aujourd'hui..."
 
   today = Date.today
@@ -40,7 +36,14 @@ task :fetch_daily_menu do
 
     if todays_menu
       text_part = todays_menu.parts.detect { |p| p.content_type =~ /text\/plain/ }
-      menu_text = text_part.decoded.delete('*').strip
+      menu_text = text_part.decoded
+                           .delete('*')
+                           .gsub(" ", " ")
+                           .squeeze(" ")
+                           .lines.map(&:strip).join("\n")
+                           .gsub(/^\s*-/, "-")
+                           .gsub(/^-(\w)/) {|m| "- #{m[1].upcase}" }
+                           .gsub(/:\s*$/, ":\n\n")
 
       Menu.store(today, menu_text)
       puts "Menu pour le #{today}"
