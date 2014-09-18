@@ -52,7 +52,7 @@ html
   body
     header
       h1
-        a(href="#{url("/")}") <span>ddp</span>roulette
+        a(href="/") <span>ddp</span>roulette
         | &nbsp;🔫
 
 
@@ -69,7 +69,7 @@ html
       == yield
 
     footer
-      a(href="#{url("/apropos")}" title="C'est quoi ?") ?
+      a(href="/apropos" title="C'est quoi ?") ?
 
 @@ apropos
 section.solo
@@ -80,7 +80,7 @@ section.solo
 @@ index
 .content-main
   h2 Ma commande :
-  form(action="#{url("/order")}" method="post")
+  form(action="/order" method="post")
     p
       input(type="text" name="user" placeholder="Utilisateur LDAP" value="#{cookies[:user] || nil}")
     p
