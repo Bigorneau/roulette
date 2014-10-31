@@ -59,7 +59,7 @@ task :fetch_daily_menu do
             Salut, le menu est à jour et vous pouvez noter vos commandes.
 
             Rendez-vous sur http://ddproulette.wyplay.int/
-          }.gsub(/^\s*/, "")
+          }.gsub(/^ */, "")
         end
       end # Warning mail
     else
@@ -85,17 +85,11 @@ task :roulette do
 
   order_candidates = orders.map { |o| o["user"] }
 
-  # TODO: Find a fair way to compute the victim
-  # min_score = scores.values_at(*order_candidates).min
-  # score_candidates = scores.select { |_, v| v.nil? || v == min_score }.keys
-  #
-  # p [orders, scores]
-
-  roulette_candidates = order_candidates
-
   puts "Candidats: #{roulette_candidates}"
   victim = roulette_candidates.sample
   puts "=> #{victim}"
+
+  survivors = order_candidates - [victim]
 
   Gmail.new(GMAIL_USER, GMAIL_PASSWORD) do |gmail|
     # Email the victim
@@ -106,19 +100,21 @@ task :roulette do
         intro = %Q{
           Salut, c'est ton tour de commander !
 
-          Voici le message à envoyer à delicedepates@gmail.com :
+          Les personnes suivantes doivent t'amener de quoi payer :
+          #{survivors.map{ |s| "- " + users[s]["firstname"] }.join(?\n)}
 
+          Voici le message à envoyer à delicedepates@gmail.com :
           ----
           Bonjour,
 
           Nous souhaitons commander #{orders.length} menus pour 12h00 :
 
           --
-        }.gsub(/^\s*/, "")
+        }.gsub(/^ */, "")
         orders_text = orders.map do |order|
           %Q{
           #{order["content"]}
-          }.gsub(/^\s*/, "")
+          }.gsub(/^ */, "")
         end.join("--\n")
         outro = %Q{
           La commande est à adresser à #{users[victim]["firstname"]} à WYPLAY (Allauch)
@@ -133,11 +129,9 @@ task :roulette do
           #{users[victim]["firstname"]}
         }
 
-        body(intro + orders_text)
+        body(intro + orders_text + outro)
       end
     end # 1st email
-
-    survivors = order_candidates - [victim]
 
     # Email the others if there are some
     exit if survivors.empty?
@@ -149,7 +143,7 @@ task :roulette do
           Salut, c'est #{users[victim]["firstname"]} qui commande aujourdhui !
 
           Merci de lui amener de quoi régler le livreur.
-        }.gsub(/^\s*/, "")
+        }.gsub(/^ */, "")
       end
     end # 2nd email
 
