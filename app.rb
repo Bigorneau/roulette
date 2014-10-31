@@ -27,13 +27,21 @@ get "/apropos" do
 end
 
 post "/order" do
-  order = Order.new(params[:user], params[:content])
-
   redirect to("/?error") if Orders.empty?(params)
-  redirect to("/?invalid_user") unless Users.authorized?(order.user)
+  redirect to("/?invalid_user") unless Users.authorized?(params[:user])
   redirect to("/?exist") if Orders.exist?(params[:user]) # TODO: overwrite the previous order
 
-  Orders.place(params[:user], params[:content])
+  if params[:like] && !params[:like].empty?
+    if Orders.exist?(params[:like])
+      order = Orders.for(params[:like])
+      Orders.place(params[:user], order["content"])
+    else
+      redirect to("/?invalid_user")
+    end
+  else
+    Orders.place(params[:user], params[:content])
+  end
+
   cookies[:user] = params[:user]
   redirect to("/?thankyou")
 end
@@ -86,6 +94,11 @@ section.solo
       input(type="text" name="user" placeholder="Utilisateur LDAP" value="#{cookies[:user] || nil}")
     p
       textarea(name="content" placeholder="Plat, boisson, dessert, chacun sur une ligne" rows="5")
+    p
+      select(name="like")
+        option(value="") Je veux commander comme…
+        - @orders.each do |order|
+          option(value="#{order["user"]}")== @users[order["user"]]["firstname"]
     p
       input(type="submit" name="send" value="Commander")
   h2

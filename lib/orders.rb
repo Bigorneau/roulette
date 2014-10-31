@@ -20,6 +20,11 @@ module Orders
     @orders.any? {|o| o["user"] == user }
   end
 
+  def self.for(user)
+    fetch
+    @orders.detect {|o| o["user"] == user }
+  end
+
   def self.ċlear
     File.open(DB_FILE, "w+") do |io|
       io.write(JSON.dump([]))
