@@ -83,13 +83,13 @@ task :roulette do
     error "Pas de commande"
   end
 
-  order_candidates = orders.map { |o| o["user"] }
+  roulette_candidates = orders.map { |o| o["user"] }
 
   puts "Candidats: #{roulette_candidates}"
   victim = roulette_candidates.sample
   puts "=> #{victim}"
 
-  survivors = order_candidates - [victim]
+  survivors = roulette_candidates - [victim]
 
   Gmail.new(GMAIL_USER, GMAIL_PASSWORD) do |gmail|
     # Email the victim
@@ -127,7 +127,7 @@ task :roulette do
 
           --
           #{users[victim]["firstname"]}
-        }
+        }.gsub(/^ */, "")
 
         body(intro + orders_text + outro)
       end
