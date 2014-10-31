@@ -15,6 +15,7 @@ require "./lib/users"
 
 before do
   @orders = Orders.fetch
+  @users = Users.fetch
 end
 
 get "/" do
@@ -94,6 +95,11 @@ section.solo
       | Une personne commande ce midi.
     - else
       | #{@orders.count} personnes commandent ce midi.
+  ul.orders
+      - @orders.each do |order|
+        li
+          h3= @users[order["user"]]["firstname"]
+          p== order["content"].gsub(/\r?\n/, "<br />")
 
 .content-more
   h2 Au menu ce midi :

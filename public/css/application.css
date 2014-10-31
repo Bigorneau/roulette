@@ -86,6 +86,15 @@ section.notice {
   color: #008811;
 }
 
+ul.orders h3 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+ul.orders p {
+  margin: 0.5rem 0;
+}
+
 footer {
   text-align: right;
 }
