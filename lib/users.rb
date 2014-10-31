@@ -4,14 +4,14 @@ module Users
   DB_FILE = "db/users.json"
 
   def self.fetch
-    @users = JSON.load(File.read(DB_FILE)) || []
+    @users = JSON.load(File.read(DB_FILE)) || {}
   rescue
-    @users = []
+    @users = {}
   end
 
   def self.authorized?(user)
     fetch
-    @users.include?(user)
+    @users.key?(user)
   end
 
 end

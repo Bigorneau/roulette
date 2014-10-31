@@ -84,7 +84,7 @@ section.solo
     p
       input(type="text" name="user" placeholder="Utilisateur LDAP" value="#{cookies[:user] || nil}")
     p
-      textarea(name="content" placeholder="Commande" rows="5")
+      textarea(name="content" placeholder="Plat, boisson, dessert, chacun sur une ligne" rows="5")
     p
       input(type="submit" name="send" value="Commander")
   h2
