@@ -112,9 +112,7 @@ task :roulette do
           --
         }.gsub(/^ */, "")
         orders_text = orders.map do |order|
-          %Q{
-          #{order["content"]}
-          }.gsub(/^ */, "")
+          order["content"].gsub(/^ */, "")
         end.join("--\n")
         outro = %Q{
           La commande est à adresser à #{users[victim]["firstname"]} à WYPLAY (Allauch)
