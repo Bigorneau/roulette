@@ -81,7 +81,7 @@ task :roulette do
     error "Pas de commande"
   end
 
-  roulette_candidates = orders.map { |o| o["user"] }
+  roulette_candidates = orders.map { |o| o["user"] }.sort
 
   puts "Candidats: #{roulette_candidates}"
   victim = roulette_candidates.sample
