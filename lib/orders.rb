@@ -33,7 +33,12 @@ module Orders
 
   def self.place(user, content) # TODO: This is not thread safe!
     fetch
-    @orders.push({user: user, content: content})
+
+    if previous = @orders.detect { |o| o["user"] == user }
+      previous["content"] = content
+    else
+      @orders.push({user: user, content: content})
+    end
 
     File.open(DB_FILE, "w+") do |io|
       io.write(JSON.dump(@orders))

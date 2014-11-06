@@ -29,7 +29,6 @@ end
 post "/order" do
   redirect to("/?error") if Orders.empty?(params)
   redirect to("/?invalid_user") unless Users.authorized?(params[:user])
-  redirect to("/?exist") if Orders.exist?(params[:user]) # TODO: overwrite the previous order
 
   if params[:like] && !params[:like].empty?
     if Orders.exist?(params[:like])
