@@ -70,13 +70,11 @@ end
 
 task :roulette do
   require "./lib/orders"
-  require "./lib/scores"
   require "./lib/users"
 
   puts "ROULETTE TIME!"
 
   orders = Orders.fetch
-  scores = Scores.fetch
   users  = Users.fetch
 
   if orders.empty?
@@ -113,11 +111,13 @@ task :roulette do
         }.gsub(/^ */, "")
         orders_text = orders.map do |order|
           order["content"].gsub(/^ */, "")
-        end.join("--\n")
+        end.join("\n--\n")
         outro = %Q{
+          --
+
           La commande est à adresser à #{users[victim]["firstname"]} à WYPLAY (Allauch)
 
-          N° de téléphone : #{users[victim]["phone"]}
+          N° de téléphone : #{users[victim]["mobile"]}
 
           Pouvez-vous confirmer la réception de la commande ?
 
