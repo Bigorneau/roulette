@@ -39,13 +39,16 @@ task :fetch_daily_menu do
     if todays_menu
       text_part = todays_menu.parts.detect { |p| p.content_type =~ /text\/plain/ }
       menu_text = text_part.decoded
-                           .delete('*')
                            .gsub(" ", " ")
                            .squeeze(" ")
-                           .lines.map(&:strip).join("\n")
-                           .gsub(/^\s*-/, "-")
-                           .gsub(/^-(\w)/) {|m| "- #{m[1].upcase}" }
-                           .gsub(/:\s*$/, ":\n\n")
+                           .gsub(/\n\n+/, "\n\n")
+                           .gsub(/\n */m, "\n")
+                           .gsub(/\n\n-/m, "\n-")
+                           .gsub(/\b\w\n/, "\n")
+                           .gsub(/^-(\S)/, "- \\1")
+                           .gsub(/;$/, ":")
+                           .gsub(/:\s+-/m, ":\n\n-")
+                           .strip
 
       Menu.store(today, menu_text)
       puts "Menu pour le #{today}"
