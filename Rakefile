@@ -1,6 +1,7 @@
 require "json"
 require "time"
 require "ostruct"
+require "fileutils"
 
 require "rubygems"
 require "bundler/setup"
@@ -50,6 +51,7 @@ task :fetch_daily_menu do
                            .gsub(/:\s+-/m, ":\n\n-")
                            .strip
 
+      FileUtils.rm("db/order_sent")
       Menu.store(today, menu_text)
       puts "Menu pour le #{today}"
       puts menu_text
@@ -149,4 +151,6 @@ task :roulette do
     end # 2nd email
 
   end
+
+  FileUtils.touch("db/order_sent")
 end

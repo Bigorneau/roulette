@@ -64,6 +64,8 @@ html
         | &nbsp;🔫
 
 
+    - if File.exist?("db/order_sent")
+        section.message.error La commande pour aujourd'hui est déjà passée !
     - if params.key?("error")
         section.message.error Il faut tout remplir
     - if params.key?("exist")
