@@ -13,6 +13,8 @@ config = JSON.load(File.read("config.json"))
 GMAIL_USER = config["gmail"]["user"]
 GMAIL_PASSWORD = config["gmail"]["password"]
 
+SENDER = "nadine.delprete@neuf.fr"
+
 DAY_NAMES = %w(LUNDI MARDI MERCREDI JEUDI VENDREDI SAMEDI DIMANCHE)
 
 def error(message)
@@ -32,10 +34,7 @@ task :fetch_daily_menu do
   week_day = DAY_NAMES[today.wday - 1]
 
   Gmail.new(GMAIL_USER, GMAIL_PASSWORD) do |gmail|
-    todays_menu = gmail.inbox.emails(on: today).detect do |email|
-      p email.subject
-      email.subject =~ /MENU DELICE DES PATES DU #{week_day} #{day}/
-    end
+    todays_menu = gmail.inbox.emails(on: today, from: SENDER).sort_by(&:date).pop
 
     if todays_menu
       text_part = todays_menu.parts.detect { |p| p.content_type =~ /text\/plain/ }
@@ -51,7 +50,7 @@ task :fetch_daily_menu do
                            .gsub(/:\s+-/m, ":\n\n-")
                            .strip
 
-      FileUtils.rm("db/order_sent")
+      FileUtils.rm("db/order_sent") rescue puts "[warn] No confirmation to delete"
       Menu.store(today, menu_text)
       puts "Menu pour le #{today}"
       puts menu_text
