@@ -87,6 +87,8 @@ section.solo
   |  est un service pour automatiser la sélection de la personne qui doit
     commander chez Délice des Pâtes.
 
+  iframe(src="http://n393160.shoutem.com/v4/?builderPreview=true&design_mode=true#dsParams[nodeId]=4300656&_=GenericScreen&page=ListPage%3AContentMenuItem%3A000000000004300656")
+
 @@ index
 .content-main
   h2 Ma commande :
