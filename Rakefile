@@ -15,6 +15,8 @@ GMAIL_PASSWORD = config["gmail"]["password"]
 
 SENDER = "nadine.delprete@neuf.fr"
 
+ORDER_SENT_FILE = File.expand_path("./db/order_sent", File.dirname(__FILE__))
+
 DAY_NAMES = %w(LUNDI MARDI MERCREDI JEUDI VENDREDI SAMEDI DIMANCHE)
 
 def error(message)
@@ -50,7 +52,7 @@ task :fetch_daily_menu do
                            .gsub(/:\s+-/m, ":\n\n-")
                            .strip
 
-      FileUtils.rm("db/order_sent") rescue puts "[warn] No confirmation to delete"
+      FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
       Menu.store(today, menu_text)
       puts "Menu pour le #{today}"
       puts menu_text
@@ -83,6 +85,9 @@ task :roulette do
 
   if orders.empty?
     error "Pas de commande"
+  end
+  if File.exist?(ORDER_SENT_FILE)
+    error "Roulette déjà tirée!"
   end
 
   roulette_candidates = orders.map { |o| o["user"] }.sort
@@ -151,5 +156,5 @@ task :roulette do
 
   end
 
-  FileUtils.touch("db/order_sent")
+  FileUtils.touch(ORDER_SENT_FILE)
 end
