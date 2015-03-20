@@ -77,6 +77,7 @@ end
 task :roulette do
   require "./lib/orders"
   require "./lib/users"
+  require "./lib/victim"
 
   puts "ROULETTE TIME!"
 
@@ -93,7 +94,7 @@ task :roulette do
   roulette_candidates = orders.map { |o| o["user"] }.sort
 
   puts "Candidats: #{roulette_candidates}"
-  victim = roulette_candidates.sample
+  victim = Victim.choose(roulette_candidates)
   puts "=> #{victim}"
 
   survivors = roulette_candidates - [victim]
