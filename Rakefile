@@ -7,6 +7,8 @@ require "rubygems"
 require "bundler/setup"
 
 require "gmail"
+require "uri"
+require "cgi"
 
 config = JSON.load(File.read("config.json"))
 
@@ -77,6 +79,7 @@ end
 task :roulette do
   require "./lib/orders"
   require "./lib/users"
+  require "./lib/victim"
 
   puts "ROULETTE TIME!"
 
@@ -93,57 +96,81 @@ task :roulette do
   roulette_candidates = orders.map { |o| o["user"] }.sort
 
   puts "Candidats: #{roulette_candidates}"
-  victim = roulette_candidates.sample
+  victim = Victim.choose(roulette_candidates)
   puts "=> #{victim}"
 
   survivors = roulette_candidates - [victim]
 
+  #----
+
+  order_text = %Q{Bonjour,
+
+    Nous souhaitons commander #{orders.length} menus pour 12h00 :
+
+    --
+  }.gsub(/^ */, "")
+
+  order_text += orders.map do |order|
+    order["content"].gsub(/^ */, "")
+  end.join("\n--\n")
+
+  order_text += %Q{
+    --
+
+    La commande est à adresser à #{users[victim]["firstname"]} à Wyplay à Allauch
+    N° de téléphone : #{users[victim]["mobile"]}
+
+    Pouvez-vous confirmer la réception de la commande ?
+
+    Cordialement,
+    #{users[victim]["firstname"]}
+  }.gsub(/^ */, "")
+
+  victim_intro = %Q{
+    Salut, c'est ton tour de commander !
+
+    Les personnes suivantes doivent t'amener de quoi payer :
+    #{survivors.map{ |s| "- " + users[s]["firstname"] }.join(?\n)}
+
+    Voici le %s à envoyer à delicedepates@gmail.com :
+    ----
+    }.gsub(/^ */, "")
+
+  #----
+
+  survivor_addresses = survivors.map { |s| "#{s}@wyplay.com" }.join(",")
+
   Gmail.new(GMAIL_USER, GMAIL_PASSWORD) do |gmail|
     # Email the victim
-    gmail.deliver do
+    mail = gmail.deliver do
       to "#{victim}@wyplay.com"
       subject "[DDP] BANG ! C'est ton tour de commander !"
+
       text_part do
-        intro = %Q{
-          Salut, c'est ton tour de commander !
+        body((victim_intro % 'message') + order_text)
+      end
 
-          Les personnes suivantes doivent t'amener de quoi payer :
-          #{survivors.map{ |s| "- " + users[s]["firstname"] }.join(?\n)}
+      html_part do
+        mail_uri = URI::MailTo.build([
+          'delicedepates@gmail.com',
+          [
+            ['subject', 'Commande pour Wyplay!'.gsub(/ /, '%20')],
+            ['bcc', survivor_addresses],
+            ['body', CGI::escape(order_text).gsub(/ /, '%20')]
+          ]
+        ]).to_s.gsub(/\+/, '%20')
 
-          Voici le message à envoyer à delicedepates@gmail.com :
-          ----
-          Bonjour,
+        html_body = (victim_intro % %Q{<a href="#{mail_uri}">message</a>}) + order_text
+        html_body = html_body.gsub(/$/, '<br>')
 
-          Nous souhaitons commander #{orders.length} menus pour 12h00 :
-
-          --
-        }.gsub(/^ */, "")
-        orders_text = orders.map do |order|
-          order["content"].gsub(/^ */, "")
-        end.join("\n--\n")
-        outro = %Q{
-          --
-
-          La commande est à adresser à #{users[victim]["firstname"]} à WYPLAY (Allauch)
-
-          N° de téléphone : #{users[victim]["mobile"]}
-
-          Pouvez-vous confirmer la réception de la commande ?
-
-          Bien cordialement,
-
-          --
-          #{users[victim]["firstname"]}
-        }.gsub(/^ */, "")
-
-        body(intro + orders_text + outro)
+        body('<html><head></head><body>' + html_body + '</body></html>')
       end
     end # 1st email
 
     # Email the others if there are some
     exit if survivors.empty?
     gmail.deliver do
-      to survivors.map { |s| "#{s}@wyplay.com" }.join(", ")
+      to survivor_addresses
       subject "[DDP] C'est #{users[victim]["firstname"]} qui commande"
       text_part do
         body %Q{
