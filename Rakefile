@@ -18,6 +18,7 @@ GMAIL_PASSWORD = config["gmail"]["password"]
 SENDER = "nadine.delprete@neuf.fr"
 
 ORDER_SENT_FILE = File.expand_path("./db/order_sent", File.dirname(__FILE__))
+ORDERS_FILE = File.expand_path("./db/orders.json", File.dirname(__FILE__))
 
 DAY_NAMES = %w(LUNDI MARDI MERCREDI JEUDI VENDREDI SAMEDI DIMANCHE)
 
@@ -34,8 +35,6 @@ task :fetch_daily_menu do
 
   users = Users.fetch
   today = Date.today
-  day = "%02d" % today.day
-  week_day = DAY_NAMES[today.wday - 1]
 
   Gmail.new(GMAIL_USER, GMAIL_PASSWORD) do |gmail|
     todays_menu = gmail.inbox.emails(on: today, from: SENDER).sort_by(&:date).pop
@@ -54,6 +53,7 @@ task :fetch_daily_menu do
                            .gsub(/:\s+-/m, ":\n\n-")
                            .strip
 
+      FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
       FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
       Menu.store(today, menu_text)
       puts "Menu pour le #{today}"
@@ -142,7 +142,7 @@ task :roulette do
 
   Gmail.new(GMAIL_USER, GMAIL_PASSWORD) do |gmail|
     # Email the victim
-    mail = gmail.deliver do
+    gmail.deliver do
       to "#{victim}@wyplay.com"
       subject "[DDP] BANG ! C'est ton tour de commander !"
 
