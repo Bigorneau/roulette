@@ -101,7 +101,9 @@ section.solo
       select(name="like")
         option(value="") Je veux commander comme…
         - @orders.each do |order|
-          option(value="#{order["user"]}")== @users[order["user"]]["firstname"]
+          - order_username = order["user"]
+          - order_user = @users[order_username]
+          option(value="#{order_username}") #{order_user["firstname"]} #{order_user["lastname"]}
     p
       input(type="submit" name="send" value="Commander")
   h2
@@ -113,8 +115,9 @@ section.solo
       | #{@orders.count} personnes commandent ce midi.
   ul.orders
       - @orders.each do |order|
+        - order_user = @users[order["user"]]
         li
-          h3= @users[order["user"]]["firstname"]
+          h3 #{order_user["firstname"]} #{order_user["lastname"]}
           p== order["content"].gsub(/\r?\n/, "<br />")
 
 .content-more

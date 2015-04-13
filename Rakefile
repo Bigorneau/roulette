@@ -130,7 +130,7 @@ task :roulette do
     Salut, c'est ton tour de commander !
 
     Les personnes suivantes doivent t'amener de quoi payer :
-    #{survivors.map{ |s| "- " + users[s]["firstname"] }.join(?\n)}
+    #{survivors.map{ |s| ["-", users[s]["firstname"], users[s]["lastname"]].join(" ") }.join(?\n)}
 
     Voici le %s à envoyer à delicedepates@gmail.com :
     ----
@@ -174,7 +174,7 @@ task :roulette do
       subject "[DDP] C'est #{users[victim]["firstname"]} qui commande"
       text_part do
         body %Q{
-          Salut, c'est #{users[victim]["firstname"]} qui commande aujourdhui !
+          Salut, c'est #{users[victim]["firstname"]} #{users[victim]["lastname"]} qui commande aujourdhui !
 
           Merci de lui amener de quoi régler le livreur.
         }.gsub(/^ */, "")
