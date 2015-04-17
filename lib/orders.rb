@@ -34,7 +34,11 @@ module Orders
   def self.place(user, content) # TODO: This is not thread safe!
     fetch
 
-    if previous = @orders.detect { |o| o["user"] == user }
+    previous = @orders.detect { |o| o["user"] == user }
+
+    if previous && content.empty?
+      @orders.delete_if { |o| o["user"] == user }
+    elsif previous
       previous["content"] = content
     else
       @orders.push({user: user, content: content})
