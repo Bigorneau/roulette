@@ -32,13 +32,14 @@ post "/order" do
 
   if params[:like] && !params[:like].empty?
     if Orders.exist?(params[:like])
-      order = Orders.for(params[:like])
+      order = Orders.for(params[:like]).first
       Orders.place(params[:user], order["content"])
     else
       redirect to("/?invalid_user")
     end
   else
-    Orders.place(params[:user], params[:content])
+    orders = params[:content].split(/\r?\n--\r?\n/).map(&:strip)
+    Orders.place(params[:user], *orders)
   end
 
   cookies[:user] = params[:user]

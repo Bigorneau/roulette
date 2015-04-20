@@ -22,7 +22,7 @@ module Orders
 
   def self.for(user)
     fetch
-    @orders.detect {|o| o["user"] == user }
+    @orders.select {|o| o["user"] == user }
   end
 
   def self.ċlear
@@ -31,19 +31,17 @@ module Orders
     end
   end
 
-  def self.place(user, content) # TODO: This is not thread safe!
+  def self.place(user, *orders) # TODO: This is not thread safe!
     fetch
+    p [user, orders]
 
-    previous = @orders.detect { |o| o["user"] == user }
+    # Remove previous orders
+    @orders.delete_if { |o| o["user"] == user }
 
-    if previous && content.empty?
-      @orders.delete_if { |o| o["user"] == user }
-    elsif previous
-      previous["content"] = content
-    else
-      @orders.push({user: user, content: content})
-    end
+    # Add new ones
+    @orders.push(*orders.map { |order| {user: user, content: order} })
 
+    # Save
     File.open(DB_FILE, "w+") do |io|
       io.write(JSON.dump(@orders))
     end
