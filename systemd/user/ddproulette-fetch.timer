@@ -1,0 +1,8 @@
+[Unit]
+Description=DDPR menu fetch timer
+
+[Timer]
+OnCalendar=Mon-Fri *-*-* 09:00:00
+
+[Install]
+WantedBy=timers.target

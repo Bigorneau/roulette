@@ -1,0 +1,11 @@
+[Unit]
+Description=DDP roulette
+
+[Service]
+Type=forking
+WorkingDirectory=%h/dev/ddproulette
+ExecStart=/home/patrice/dev/ddproulette/bin/rake roulette
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target
