@@ -1,0 +1,11 @@
+[Unit]
+Description=DDP Daemon
+
+[Service]
+Type=forking
+WorkingDirectory=%h/dev/ddproulette
+TimeoutSec=0s
+ExecStart=/usr/bin/ruby app.rb
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,8 @@
+[Unit]
+Description=DDP roulette choice timer
+
+[Timer]
+OnCalendar=Mon-Fri *-*-* 10:30:00
+
+[Install]
+WantedBy=timers.target

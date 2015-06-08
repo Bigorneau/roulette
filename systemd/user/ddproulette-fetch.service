@@ -1,0 +1,12 @@
+[Unit]
+Description=DDP fetch menu
+
+[Service]
+Type=forking
+Environment=DDPR_PATH=%h/dev/ddproulette
+WorkingDirectory=%h/dev/ddproulette
+ExecStartPre=/bin/rm -fv $DDPR_PATH/db/order*
+ExecStart=/home/patrice/dev/ddproulette/bin/rake fetch_daily_menu
+
+[Install]
+WantedBy=default.target
