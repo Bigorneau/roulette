@@ -32,6 +32,25 @@ module Victim
     end
   end
 
+  class FairChooserFiltered < Chooser
+    def initialize
+      @db_file = "db/fair_chooser.json"
+    end
+
+    def last
+      @db["last"] || nil
+    end
+
+    def choose(candidates)
+      counts = candidates.inject(Hash.new(0)) { |h,v| h[v] += 1; h }
+      filtered = candidates.select { |k| counts[k] == counts.values.max}
+      victim = (filtered - [last()]).sample || filtered.sample
+      @db = {last: victim} if victim
+      victim
+    end
+  end
+
+
   class FairChooser < Chooser
     def initialize
       @db_file = "db/fair_chooser.json"
@@ -49,8 +68,7 @@ module Victim
   end
 
   def self.choose(candidates)
-    chooser = FairChooser.new
-    #chooser = RandomChooser.new
+    chooser = FairChooserFiltered.new
     chooser.init
     victim = chooser.choose(candidates)
     chooser.finish
