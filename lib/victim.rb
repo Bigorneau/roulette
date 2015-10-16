@@ -42,8 +42,8 @@ module Victim
     end
 
     def choose(candidates)
-      counts = candidates.inject(Hash.new(0)) { |h,v| h[v] += 1; h }
-      filtered = candidates.select { |k| counts[k] == counts.values.max}
+      scores = Hash[candidates.map {|c| [c, candidates.count(c)] }]
+      filtered = candidates.select { |k| scores[k] == scores.values.max}
       victim = (filtered - [last()]).sample || filtered.sample
       @db = {last: victim} if victim
       victim
