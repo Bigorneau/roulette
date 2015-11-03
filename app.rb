@@ -38,7 +38,7 @@ post "/order" do
       redirect to("/?invalid_user")
     end
   else
-    orders = params[:content].split(/\r?\n--\r?\n/).map(&:strip)
+    orders = params[:content].split(/\r?\n--+\r?\n/).map(&:strip)
     Orders.place(params[:user], *orders)
   end
 
