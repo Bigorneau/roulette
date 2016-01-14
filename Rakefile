@@ -15,7 +15,9 @@ config = JSON.load(File.read("config.json"))
 GMAIL_USER = config["gmail"]["user"]
 GMAIL_PASSWORD = config["gmail"]["password"]
 
-SENDER = "nadine.delprete@neuf.fr"
+SENDER = config["service"]["sender"]
+
+HOSTNAME = config["host"]["url"]
 
 ORDER_SENT_FILE = File.expand_path("./db/order_sent", File.dirname(__FILE__))
 ORDERS_FILE = File.expand_path("./db/orders.json", File.dirname(__FILE__))
@@ -66,7 +68,7 @@ task :fetch_daily_menu do
           body %Q{
             Salut, le menu est à jour et vous pouvez noter vos commandes.
 
-            Rendez-vous sur http://ddproulette.wyplay.int/
+            Rendez-vous sur #{HOSTNAME}
           }.gsub(/^ */, "")
         end
       end # Warning mail
