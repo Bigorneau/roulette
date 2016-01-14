@@ -13,6 +13,8 @@ require "./lib/menu"
 require "./lib/orders"
 require "./lib/users"
 
+set :bind, '0.0.0.0'
+
 before do
   @orders = Orders.fetch
   @users = Users.fetch
