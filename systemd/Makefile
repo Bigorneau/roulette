@@ -9,11 +9,11 @@ all: user-services
 
 user-services:
 	-mkdir --parents --verbose $(XDG_CONFIG_HOME)/systemd/user
-	-ln --symbolic $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-fetch.service $(XDG_CONFIG_HOME)/systemd/user
-	-ln --symbolic $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-fetch.timer $(XDG_CONFIG_HOME)/systemd/user
-	-ln --symbolic $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-roulette.service $(XDG_CONFIG_HOME)/systemd/user
-	-ln --symbolic $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-roulette.timer $(XDG_CONFIG_HOME)/systemd/user
-	-ln --symbolic $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette.service $(XDG_CONFIG_HOME)/systemd/user
+	-cp $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-fetch.service $(XDG_CONFIG_HOME)/systemd/user
+	-cp $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-fetch.timer $(XDG_CONFIG_HOME)/systemd/user
+	-cp $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-roulette.service $(XDG_CONFIG_HOME)/systemd/user
+	-cp $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette-roulette.timer $(XDG_CONFIG_HOME)/systemd/user
+	-cp $(CURRENT_DIR)/$(SYSTEMD_USER_DIR)/ddproulette.service $(XDG_CONFIG_HOME)/systemd/user
 
 clean:
 	-rm --recursive --force $(XDG_CONFIG_HOME)/systemd/user/ddproulette-fetch.service
