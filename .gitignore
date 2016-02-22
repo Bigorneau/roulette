@@ -1,3 +1,4 @@
 .bundle
 db/*.json
 config.json
+Gemfile.lock
