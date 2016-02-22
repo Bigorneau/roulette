@@ -16,7 +16,7 @@ module Menu
   def self.content
     menu = JSON.load(File.read(DB_FILE))
 
-    Markdown.render(menu["content"])
+    menu["content"]
   end
 
   def self.store(date, content)

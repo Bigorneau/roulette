@@ -42,22 +42,16 @@ task :fetch_daily_menu do
     todays_menu = gmail.inbox.emails(on: today, from: SENDER).sort_by(&:date).pop
 
     if todays_menu
-      text_part = todays_menu.parts.detect { |p| p.content_type =~ /text\/plain/ }
-      menu_text = text_part.decoded
-                           .gsub(" ", " ")
-                           .squeeze(" ")
-                           .gsub(/\n\n+/, "\n\n")
-                           .gsub(/\n */m, "\n")
-                           .gsub(/\n\n-/m, "\n-")
-                           .gsub(/\b\w\n/, "\n")
-                           .gsub(/^-(\S)/, "- \\1")
-                           .gsub(/;$/, ":")
-                           .gsub(/:\s+-/m, ":\n\n-")
-                           .strip
+      html_part = todays_menu.parts
+        .detect { |p| p.content_type =~ /text\/html/ }
+        .decoded
+      menu_text = todays_menu.parts
+        .detect { |p| p.content_type =~ /text\/plain/ }
+        .decoded
 
       FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
       FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
-      Menu.store(today, menu_text)
+      Menu.store(today, html_part.decoded)
       puts "Menu pour le #{today}"
       puts menu_text
 
