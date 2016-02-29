@@ -88,8 +88,10 @@ task :roulette do
   end
 
   # Filter by priority
-  priorities = Hash[orders.map {|o| [o, o["priority"] ]}]
+  priorities = Hash[orders.map {|o| [o, Integer(o["priority"]) ]}]
+  puts "Priorities: #{priorities}"
   filtered = orders.select { |k| priorities[k] == priorities.values.max}
+  puts "Filtered: #{filtered}"
   roulette_players = orders.map { |o| o["user"] }.sort
   roulette_candidates = filtered.map { |o| o["user"] }.sort
 
