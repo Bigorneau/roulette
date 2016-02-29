@@ -87,13 +87,18 @@ task :roulette do
     error "Roulette déjà tirée!"
   end
 
-  roulette_candidates = orders.map { |o| o["user"] }.sort
+  # Filter by priority
+  priorities = Hash[orders.map {|o| [o, o["priority"] ]}]
+  filtered = orders.select { |k| priorities[k] == priorities.values.max}
+  roulette_players = orders.map { |o| o["user"] }.sort
+  roulette_candidates = filtered.map { |o| o["user"] }.sort
 
+  puts "Players: #{roulette_players}"
   puts "Candidats: #{roulette_candidates}"
   victim = Victim.choose(roulette_candidates)
   puts "=> #{victim}"
 
-  survivors = roulette_candidates - [victim]
+  survivors = roulette_players - [victim]
 
   #----
 

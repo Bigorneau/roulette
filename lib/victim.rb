@@ -50,26 +50,6 @@ module Victim
     end
   end
 
-  class UnfairChooserFiltered < Chooser
-    def initialize
-      @db_file = "db/fair_chooser.json"
-    end
-
-    def last
-      @db["last"] || nil
-    end
-
-    def choose(candidates)
-      scores = Hash[candidates.map {|c| [c, candidates.count(c)] }]
-      priorities = Hash[candidates.map {|c| [c, candidates.priority ]}]
-      filteredPriority = candidates.select { |k| priorities[k] == priorities.values.max}
-      filtered = filteredPriority.select { |k| scores[k] == scores.values.max}
-      victim = (filtered - [last()]).sample || filtered.sample
-      @db = {last: victim} if victim
-      victim
-    end
-  end
-
   class FairChooser < Chooser
     def initialize
       @db_file = "db/fair_chooser.json"
