@@ -44,10 +44,8 @@ task :fetch_daily_menu do
     if todays_menu
       html_part = todays_menu.parts
         .detect { |p| p.content_type =~ /text\/html/ }
-        .decoded
       menu_text = todays_menu.parts
         .detect { |p| p.content_type =~ /text\/plain/ }
-        .decoded
 
       FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
       FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
