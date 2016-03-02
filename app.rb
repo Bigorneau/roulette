@@ -42,7 +42,7 @@ post "/order" do
   else
     orders = params[:content].split(/\r?\n--+\r?\n/).map(&:strip)
     priority = params[:priority]
-    Orders.place(params[:user], *orders, priority)
+    Orders.place(params[:user], *orders, 1)
   end
 
   cookies[:user] = params[:user]
