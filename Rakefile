@@ -47,7 +47,6 @@ task :fetch_daily_menu do
       menu_text = todays_menu.parts
         .detect { |p| p.content_type =~ /text\/plain/ }
 
-      FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
       FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
       Menu.store(today, html_part.decoded)
       puts "Menu pour le #{today}"
@@ -185,4 +184,5 @@ task :roulette do
   end
 
   FileUtils.touch(ORDER_SENT_FILE)
+  FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
 end
