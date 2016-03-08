@@ -47,7 +47,6 @@ task :fetch_daily_menu do
       menu_text = todays_menu.parts
         .detect { |p| p.content_type =~ /text\/plain/ }
 
-      FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
       FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
       Menu.store(today, html_part.decoded)
       puts "Menu pour le #{today}"
@@ -87,13 +86,20 @@ task :roulette do
     error "Roulette déjà tirée!"
   end
 
-  roulette_candidates = orders.map { |o| o["user"] }.sort
+  # Filter by priority
+  priorities = Hash[orders.map {|o| [o, Integer(o["priority"]) ]}]
+  puts "Priorities: #{priorities}"
+  filtered = orders.select { |k| priorities[k] == priorities.values.max}
+  puts "Filtered: #{filtered}"
+  roulette_players = orders.map { |o| o["user"] }.sort
+  roulette_candidates = filtered.map { |o| o["user"] }.sort
 
+  puts "Players: #{roulette_players}"
   puts "Candidats: #{roulette_candidates}"
   victim = Victim.choose(roulette_candidates)
   puts "=> #{victim}"
 
-  survivors = roulette_candidates - [victim]
+  survivors = roulette_players - [victim]
 
   #----
 
@@ -178,4 +184,5 @@ task :roulette do
   end
 
   FileUtils.touch(ORDER_SENT_FILE)
+  FileUtils.rm(ORDERS_FILE) rescue puts "[warn] No previous orders"
 end

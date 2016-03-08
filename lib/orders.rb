@@ -2,6 +2,12 @@ require "json"
 
 Order = Struct.new(:user, :content)
 
+module OrderPriority
+  DODGE = -1
+  RANDOM = 0
+  SACRIFICE = 1
+end
+
 module Orders
   DB_FILE = "db/orders.json"
 
@@ -31,15 +37,15 @@ module Orders
     end
   end
 
-  def self.place(user, *orders) # TODO: This is not thread safe!
+  def self.place(user, *orders, priority) # TODO: This is not thread safe!
     fetch
-    p [user, orders]
+    p [user, orders, priority]
 
     # Remove previous orders
     @orders.delete_if { |o| o["user"] == user }
 
     # Add new ones
-    @orders.push(*orders.map { |order| {user: user, content: order} })
+    @orders.push(*orders.map { |order| {user: user, content: order, priority: priority} })
 
     # Save
     File.open(DB_FILE, "w+") do |io|

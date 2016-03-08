@@ -50,7 +50,6 @@ module Victim
     end
   end
 
-
   class FairChooser < Chooser
     def initialize
       @db_file = "db/fair_chooser.json"
