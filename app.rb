@@ -35,14 +35,18 @@ post "/order" do
   if params[:like] && !params[:like].empty?
     if Orders.exist?(params[:like])
       order = Orders.for(params[:like]).first
-      Orders.place(params[:user], order["content"], 0)
+      Orders.place(params[:user], order["content"], OrderPriority::RANDOM)
     else
       redirect to("/?invalid_user")
     end
   else
     orders = params[:content].split(/\r?\n--+\r?\n/).map(&:strip)
     priority = params[:priority]
-    Orders.place(params[:user], *orders, 1)
+    if orders.length > 1
+      Orders.place(params[:user], *orders, OrderPriority::SACRIFICE)
+    else
+      Orders.place(params[:user], *orders, priority)
+    end
   end
 
   cookies[:user] = params[:user]
@@ -109,11 +113,11 @@ section.solo
           - order_user = @users[order_username]
           option(value="#{order_username}") #{order_user["firstname"]} #{order_user["lastname"]}
     p
-      input{type="radio" name="priority" value="0" checked="checked"} Aléatoire
+      input{type="radio" name="priority" value="#{OrderPriority::RANDOM}" checked="checked"} Aléatoire
     p
-      input{type="radio" name="priority" value="1"} Je me sacrifie aujourd'hui
+      input{type="radio" name="priority" value="#{OrderPriority::SACRIFICE}"} Je me sacrifie aujourd'hui
     p
-      input{type="radio" name="priority" value="-1"} Je ne peux pas commander aujourd'hui
+      input{type="radio" name="priority" value="#{OrderPriority::DODGE}"} Je ne peux pas commander aujourd'hui
     p
       input(type="submit" name="send" value="Commander")
   h2

@@ -2,6 +2,12 @@ require "json"
 
 Order = Struct.new(:user, :content)
 
+module OrderPriority
+  DODGE = -1
+  RANDOM = 0
+  SACRIFICE = 1
+end
+
 module Orders
   DB_FILE = "db/orders.json"
 
