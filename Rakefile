@@ -177,6 +177,13 @@ task :roulette do
           Salut, c'est #{users[victim]["firstname"]} #{users[victim]["lastname"]} qui commande aujourdhui !
 
           Merci de lui amener de quoi régler le livreur.
+
+
+          DEBUG
+          Joueurs: #{roulette_players}
+          Candidats: #{roulette_candidates}
+
+          Orders: #{priorities}
         }.gsub(/^ */, "")
       end
     end # 2nd email
