@@ -41,7 +41,7 @@ post "/order" do
     end
   else
     orders = params[:content].split(/\r?\n--+\r?\n/).map(&:strip)
-    priority = params[:priority]
+    priority = params[:priority] ? params[:priority] : OrderPriority::RANDOM
     if orders.length > 1
       Orders.place(params[:user], *orders, OrderPriority::SACRIFICE)
     else
