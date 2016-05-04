@@ -1,7 +1,21 @@
 require "json"
 require "redcarpet"
+require "nokogiri"
 
 Markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+
+module MenuFormater
+
+  def self.clean(html)
+    doc = Nokogiri.HTML(html)
+    doc.css('a,blink,marquee,div,blockquote').each do |el|
+        el.replace(el.inner_html)
+    end
+    cleaned = doc.to_html
+    puts cleaned
+    return cleaned
+  end
+end
 
 module Menu
   DB_FILE = "db/menu.json"
@@ -23,7 +37,7 @@ module Menu
     File.open(DB_FILE, "w+") do |io|
       json = {
         date: date.strftime("%Y-%m-%d"),
-        content: content
+        content: MenuFormater.clean(content)
       }.to_json
 
       io.write(json)

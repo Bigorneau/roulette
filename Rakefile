@@ -50,7 +50,6 @@ task :fetch_daily_menu do
       FileUtils.rm(ORDER_SENT_FILE) rescue puts "[warn] No confirmation to delete"
       Menu.store(today, html_part.decoded)
       puts "Menu pour le #{today}"
-      puts menu_text
 
       gmail.deliver do
         to users.keys.map { |s| "#{s}@wyplay.com" }.join(", ")
